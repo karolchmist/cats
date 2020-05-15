@@ -48,12 +48,12 @@ sealed class NonEmptyMapOps[K, A](val value: NonEmptyMap[K, A]) {
   /**
    * Alias for [[concat]]
    */
-  def ++(as: NonEmptyMap[K, A]): NonEmptyMap[K, A] = concat(as)
+  def ++(as: SortedMap[K, A]): NonEmptyMap[K, A] = concat(as)
 
   /**
-   * Appends this NEM to another NEM, producing a new `NonEmptyMap`.
+   * Appends this NEM to another SortedMap, producing a new `NonEmptyMap`.
    */
-  def concat(as: NonEmptyMap[K, A]): NonEmptyMap[K, A] = NonEmptyMapImpl.create(toSortedMap ++ as.toSortedMap)
+  def concat(as: SortedMap[K, A]): NonEmptyMap[K, A] = NonEmptyMapImpl.create(toSortedMap ++ as)
 
   /**
    * Removes a key from this map, returning a new SortedMap.
@@ -258,7 +258,7 @@ sealed abstract private[data] class NonEmptyMapInstances extends NonEmptyMapInst
         fa.map(f)
 
       def combineK[A](a: NonEmptyMap[K, A], b: NonEmptyMap[K, A]): NonEmptyMap[K, A] =
-        a ++ b
+        a ++ b.toSortedMap
 
       override def size[A](fa: NonEmptyMap[K, A]): Long = fa.length.toLong
 
@@ -313,7 +313,7 @@ sealed abstract private[data] class NonEmptyMapInstances extends NonEmptyMapInst
     Show.show[NonEmptyMap[K, A]](_.show)
 
   implicit def catsDataBandForNonEmptyMap[K, A]: Band[NonEmptyMap[K, A]] = new Band[NonEmptyMap[K, A]] {
-    def combine(x: NonEmptyMap[K, A], y: NonEmptyMap[K, A]): NonEmptyMap[K, A] = x ++ y
+    def combine(x: NonEmptyMap[K, A], y: NonEmptyMap[K, A]): NonEmptyMap[K, A] = x ++ y.toSortedMap
   }
 }
 
